@@ -24,6 +24,14 @@ export default class ObjectsManager {
     }
   }
 
+  getAllComponents() {
+    const list: IComposite[] = [];
+    for (const attribute in Attributes) {
+      const composites = this.attributes[attribute];
+      if (composites != null) list.push(composites);
+    }
+  }
+
   getComponentsByAttribute(attribute: Attributes): IComposite[] {
     return this.attributes[attribute];
   }

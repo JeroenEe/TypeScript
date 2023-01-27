@@ -9,7 +9,7 @@ export default abstract class Component implements IComposite {
   children: IComposite[] = [];
   // parent: IComposite;
   private _objectsManager: ObjectsManager;
-  private _parent: IComposite;
+  protected _parent: IComposite;
 
   constructor() {
     this.id = new UUID();

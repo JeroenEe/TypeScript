@@ -3,9 +3,6 @@ import World from "./Example01/World/World";
 import { Attributes } from "./Example01/Terminology";
 import ObjectsManager from "./CompositeObjectsManager/ObjectsManager";
 
-// Singleton
-// const objects: ObjectsManager = new ObjectsManager();
-
 // Example01
 const world: World = new World();
 
@@ -13,12 +10,15 @@ world.addComponent(new Human("Bertha"));
 const patrick = new Human("Patrick");
 
 world.addComponent(patrick);
-console.log(world.children);
+console.log('A world with Patrick', world.children);
 
 world.removeComponent(patrick);
-console.log(world.children);
-
-ObjectsManager.getInstance().getComponentsByAttribute(Attributes.Human);
+console.log('A world without Patrick', world.children);
+console.log('ARMS', ObjectsManager.getInstance().getComponentsByAttribute(Attributes.Arm));
+console.log('LEGS', ObjectsManager.getInstance().getComponentsByAttribute(Attributes.Leg));
+console.log('HEADS', ObjectsManager.getInstance().getComponentsByAttribute(Attributes.Head));
+console.log('TORSOS', ObjectsManager.getInstance().getComponentsByAttribute(Attributes.Torso));
+console.log('COMPONENTS', ObjectsManager.getInstance().getAllComponents());
 
 for (let i = 0; i < 100; i++) {
   world.addComponent(new Human());
