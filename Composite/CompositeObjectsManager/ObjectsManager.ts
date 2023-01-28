@@ -1,26 +1,28 @@
-import IComposite from "../Example01/IComposite";
+import IComposite, { Children } from "../Example01/IComposite";
 import { Attributes } from "../Example01/Terminology";
+import { v4 as UUID } from "uuid";
 
-export type AttributeList = Map<Attributes, IComposite[]>;
+export type AttributeList = Map<Attributes, Children>;
 
 export class EventManager {}
 
 export default class ObjectsManager {
-  private attributes = {} as AttributeList;
+  private attributes = new Map();
   private static instance: ObjectsManager;
 
   addComponentByAttribute(attribute: Attributes, component: IComposite) {
-    if (this.attributes[attribute] === undefined)
-      this.attributes[attribute] = [component];
-    else this.attributes[attribute].push(component);
+    let components = this.attributes.get(attribute);
+    if (components === undefined) {
+      components = new Map();
+    }
+    components.set(component.id, component);
   }
 
-  removeComponent(component: IComposite) {
-    for (const attribute in Attributes) {
-      const index = this.attributes[attribute]?.findIndex(
-        (_component: IComposite) => _component.id === component.id
-      );
-      this.attributes[attribute]?.splice(index, 1);
+  removeComponent(id: UUID) {
+    for (let [attribute, children] of this.attributes.entries()) {
+      if (children !== undefined) {
+        children.delete(id);
+      }
     }
   }
 
@@ -28,8 +30,9 @@ export default class ObjectsManager {
     const list: IComposite[] = [];
     for (const attribute in Attributes) {
       const composites = this.attributes[attribute];
-      if (composites != null) list.push(composites);
+      if (composites !== undefined) list.push(composites);
     }
+    return list;
   }
 
   getComponentsByAttribute(attribute: Attributes): IComposite[] {

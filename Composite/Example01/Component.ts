@@ -1,42 +1,60 @@
 import ObjectsManager from "../CompositeObjectsManager/ObjectsManager";
-import IComposite from "./IComposite";
+import IComposite, { Children } from "./IComposite";
 import { Attributes } from "./Terminology";
 import { v4 as UUID } from "uuid";
 
 export default abstract class Component implements IComposite {
   id: UUID;
-  attributes: Attributes[];
-  children: IComposite[] = [];
-  // parent: IComposite;
-  private _objectsManager: ObjectsManager;
+  attributes: Attributes[] = [];
+  children?: Children = new Map();
   protected _parent: IComposite;
+  private objectsManager: ObjectsManager;
 
   constructor() {
     this.id = new UUID();
     this.attributes = [];
-    this._objectsManager = ObjectsManager.getInstance();
+    this.objectsManager = ObjectsManager.getInstance();
   }
 
-  addComponent(component: IComposite) {
-    const parent: Component = this;
+  /**
+   * Add child
+   * @param component
+   */
+  add(component: IComposite) {
+    const parent: IComposite = this;
     component.parent = parent;
-    this.children.push(component);
+    this.children.set(component.id, component);
   }
 
-  removeComponent(component: IComposite) {
-    const index = this.children.indexOf(component);
-    this.children.splice(index, 1);
-    this._objectsManager.removeComponent(component);
+  /**
+   * Call destroy in child.
+   * @param component
+   */
+  remove(component: IComposite) {
+    this.children.get(component.id)?.destroy();
   }
 
   addAttribute(attribute: Attributes) {
     this.attributes.push(attribute);
-    this._objectsManager.addComponentByAttribute(attribute, this);
+    this.objectsManager.addComponentByAttribute(attribute, this);
   }
 
   removeAttribute(attribute: Attributes) {
     const index = this.attributes.indexOf(attribute);
     this.attributes.splice(index, 1);
+  }
+
+  // Cleanup before removal.
+  destroy() {
+    this.disposeChildren();
+    this.objectsManager.removeComponent(this.id);
+    this.parent.children?.delete(this.id);
+  }
+
+  private disposeChildren() {
+    for (let child of this.children?.values()) {
+      child.destroy();
+    }
   }
 
   get parent(): IComposite {

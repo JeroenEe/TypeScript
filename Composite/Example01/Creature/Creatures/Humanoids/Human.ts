@@ -14,12 +14,12 @@ export default class Human extends Humanoid {
 
     this.name = name;
 
-    this.addComponent(new Torso());
-    this.addComponent(new Head());
-    this.addComponent(new Arm(undefined, Sides.Left));
-    this.addComponent(new Arm(undefined, Sides.Right));
-    this.addComponent(new Leg(undefined, Sides.Left));
-    this.addComponent(new Leg(undefined, Sides.Right));
+    this.add(new Torso());
+    this.add(new Head());
+    this.add(new Arm(undefined, Sides.Left));
+    this.add(new Arm(undefined, Sides.Right));
+    this.add(new Leg(undefined, Sides.Left));
+    this.add(new Leg(undefined, Sides.Right));
 
     this.addAttribute(Attributes.Human);
   }
