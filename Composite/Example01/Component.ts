@@ -6,7 +6,7 @@ import { v4 as UUID } from "uuid";
 export default abstract class Component implements IComposite {
   id: UUID;
   attributes: Attributes[] = [];
-  children?: Children = new Map();
+  children?: Children = new Map<UUID, IComposite>();
   protected _parent: IComposite;
   private objectsManager: ObjectsManager;
 

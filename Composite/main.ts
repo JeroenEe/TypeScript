@@ -1,38 +1,45 @@
+import assert = require("assert");
 import ObjectsManager from "./CompositeObjectsManager/ObjectsManager";
 import Human from "./Example01/Creature/Creatures/Humanoids/Human";
-import { Attributes } from "./Example01/Terminology";
 import World from "./Example01/World/World";
 
 // Example01
 let perf1: number;
 let perf2: number;
-const world: World = new World();
+let world: World = new World();
 
 // world.addComponent(new Human("Bertha"));
 const patrick = new Human("Patrick");
 
-world.add(patrick);
-console.log('A world with Patrick', world.children);
+const amount = 1000;
+const humans: Human[] = [];
+for (let i = 0; i < amount; i++) {
+  humans.push(new Human());
+}
+perf1 = performance.now();
+humans.forEach((human) => world.add(human));
+perf2 = performance.now();
+console.log(`Added ${amount} humans in:`, perf2 - perf1);
 
-world.remove(patrick); // FIXME: Patrick's right arm and leg are... left behind. 🥁
-console.log('A world without Patrick', world.children);
-// console.log('ARMS', ObjectsManager.getInstance().getComponentsByAttribute(Attributes.Arm));
-// console.log('LEGS', ObjectsManager.getInstance().getComponentsByAttribute(Attributes.Leg));
-// console.log('HEADS', ObjectsManager.getInstance().getComponentsByAttribute(Attributes.Head));
-// console.log('TORSOS', ObjectsManager.getInstance().getComponentsByAttribute(Attributes.Torso));
-console.log('COMPONENTS', ObjectsManager.getInstance().getAllComponents());
-
-
-
-
-
-
-// perf1 = performance.now();
-// const amount = 100;
-// for (let i = 0; i < amount; i++) {
-//   world.addComponent(new Human());
-// }
-// perf2 = performance.now();
-// console.log(`Added ${amount} humans in:`, perf2 - perf1);
+perf1 = performance.now();
+humans.forEach((human) => world.remove(human));
+perf2 = performance.now();
+console.log(`Destroyed ${amount} humans in:`, perf2 - perf1);
 
 //
+
+describe("Composite Pattern", () => {
+  it("Should add and remove Patrick from this world, leaving nothing of him behind", () => {
+    world = new World();
+
+    world.add(patrick);
+    console.log("A world with Patrick", world.children);
+    assert(world.children.get(patrick.id) === patrick.id);
+
+    world.remove(patrick);
+    console.log("A world without Patrick", world.children);
+    assert(world.children.get(patrick.id) === undefined);
+
+    assert.equal(ObjectsManager.getInstance().getAllComponents().length, 0);
+  });
+});

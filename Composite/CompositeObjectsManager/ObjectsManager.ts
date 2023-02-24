@@ -7,7 +7,7 @@ export type AttributeList = Map<Attributes, Children>;
 export class EventManager {}
 
 export default class ObjectsManager {
-  private attributes = new Map();
+  private attributes = new Map<Attributes, Children>();
   private static instance: ObjectsManager;
 
   addComponentByAttribute(attribute: Attributes, component: IComposite) {
@@ -36,7 +36,10 @@ export default class ObjectsManager {
   }
 
   getComponentsByAttribute(attribute: Attributes): IComposite[] {
-    return this.attributes[attribute];
+    if (this.attributes.has(attribute)) {
+      return this.attributes.get(attribute)[1];
+    }
+    else return [];
   }
 
   static getInstance(): ObjectsManager {
